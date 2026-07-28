@@ -1,0 +1,8 @@
+#Core
+.vscode
+build/
+*.dll
+
+#Py-Client
+__pycache__
+*.pyc
