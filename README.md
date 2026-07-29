@@ -28,3 +28,7 @@ Run the `python client` with:
 ```shell
 python clients/py/main.py
 ```
+
+## Cs-Client
+
+Open the visual studio `.sln` file to run the `C# client`.

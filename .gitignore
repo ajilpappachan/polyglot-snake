@@ -1,8 +1,13 @@
-#Core
+# Core
 .vscode
 build/
 *.dll
 
-#Py-Client
+# Py-Client
 __pycache__
 *.pyc
+
+# Cs-Client
+.vs/
+bin/
+obj/
