@@ -15,7 +15,7 @@ for %%e in (%targets%) do (
 )
 
 REM Clean Directories
-set "targets=build __pycache__ .vs bin obj dist libs"
+set "targets=build __pycache__ .vs bin obj node_modules dist libs"
 
 for %%d in (%targets%) do (
     for /D /R "%root%" %%D in (%%d) do (

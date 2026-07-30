@@ -27,11 +27,13 @@ Open the visual studio `.sln` file to run the `C# client`.
 Run the `vite` application with
 
 ```shell
+npm install
 npm run dev
 ```
 
 or build release build with
 
 ```shell
+npm install
 npm run build
 ```
