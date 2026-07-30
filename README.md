@@ -6,20 +6,9 @@ The objective is to make the core of a snake game in `C++` and render the game o
 
 ## Setup
 
-Build `core` first:
+Run `BuildCore.bat` to build the dll/wasm files and copy them to client projects.
 
-```shell
-cmake -S core -B core/build
-cmake --build core/build
-```
-
-Building `core` will also copy library files to clients.
-
-Optional: Run smoke test to verify `core` built succesfully:
-
-```shell
-ctest --test-dir core/build -C Debug smoke
-```
+Requires `cmake` and `emsdk` installed.
 
 ## Py-client
 
@@ -32,3 +21,17 @@ python clients/py/main.py
 ## Cs-Client
 
 Open the visual studio `.sln` file to run the `C# client`.
+
+## Ts-Client
+
+Run the `vite` application with
+
+```shell
+npm run dev
+```
+
+or build release build with
+
+```shell
+npm run build
+```

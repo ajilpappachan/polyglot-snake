@@ -10,15 +10,3 @@ enable_testing()
 add_executable(core_test test/core_api_test.cpp)
 target_link_libraries(core_test PRIVATE core)
 add_test(NAME smoke COMMAND core_test)
-
-add_custom_command(
-    TARGET core POST_BUILD 
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different
-    $<TARGET_FILE:core> ${CMAKE_SOURCE_DIR}/../clients/py
-    )
-
-add_custom_command(
-    TARGET core POST_BUILD 
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different
-    $<TARGET_FILE:core> ${CMAKE_SOURCE_DIR}/../clients/cs
-    )
