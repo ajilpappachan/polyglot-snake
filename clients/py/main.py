@@ -1,29 +1,17 @@
-import pygame
+from gameobject import GameObjectMan
+from renderer import Renderer
+from snake import Snake
 
-from snake_game import SnakeGame
+render = Renderer(600, 600)
+snake = Snake(600//2 - 20, 600//2 - 20, 20)
+GameObjectMan.add("snake", snake)
 
-game = SnakeGame("core.dll")
-width = game.game_width()
-height = game.game_height()
-grid_size = 20
+while render.running:
+    print(f"FPS: {render.deltatime_s()}")
+    render.poll_events()
 
-pygame.init()
-screen = pygame.display.set_mode((width * 20, height * 20))
-clock = pygame.time.Clock()
-running = True
+    GameObjectMan.update(render.deltatime_s())
 
-while running:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
+    render.draw()
 
-    screen.fill("purple")
-
-    position = game.segment_position(0)
-    pygame.draw.rect(screen, "white", (position[0] * grid_size, position[1] * grid_size, grid_size, grid_size))
-
-    pygame.display.flip()
-
-    clock.tick(60)
-
-pygame.quit()
+render.destroy()

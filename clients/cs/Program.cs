@@ -1,11 +1,18 @@
-﻿
-using System.Runtime.InteropServices;
+﻿using cs_snake;
+using Raylib_cs;
 
-[DllImport("core.dll", CallingConvention = CallingConvention.Cdecl)]
-static extern int core_abi_version();
+Window.Init(600, 600, "CS_SNAKE");
+GameObjectMan.Init();
 
-[DllImport("core.dll", CallingConvention = CallingConvention.Cdecl)]
-static extern int core_add(int a, int b);
+GameObject snake = new SnakeSegment("segment_0", 600 / 2 - 20, 600 / 2 - 20, 20, Color.White, 2, Direction.Up);
+GameObjectMan.Add(snake);
 
-Console.WriteLine(core_abi_version());
-Console.WriteLine(core_add(1, 5));
+while (Window.IsRunning())
+{
+    GameObjectMan.Update(Window.GetDeltatime());
+    Window.Draw();
+}
+
+GameObjectMan.Destroy();
+Window.Destroy();
+
