@@ -1,0 +1,6 @@
+# The point of this project is the C++ core and its ABI surface. That core is
+# deliberately small, while the three client implementations are bulkier, so
+# GitHub's largest-language rule reports the repo as C#. Excluding the clients
+# from language stats makes the badge reflect what the project is actually about.
+# The clients are still part of the project; see the README.
+clients/** linguist-vendored
