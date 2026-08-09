@@ -1,0 +1,11 @@
+# The point of this project is the C++ core and its ABI surface. That core is
+# deliberately small, while the three client implementations and the build
+# scripts are bulkier, so GitHub's largest-language rule misreported the repo.
+# Excluding those makes the language badge reflect what the project is about.
+# The clients are still part of the project; see the README.
+clients/** linguist-vendored
+*.bat linguist-vendored
+
+# The public ABI header is C-linkage but part of the C++ core; count it as C++
+# rather than letting it split the core's byte count across two languages.
+core/include/*.h linguist-language=C++
