@@ -1,18 +1,15 @@
 ﻿using cs_snake;
-using Raylib_cs;
 
-Window.Init(600, 600, "CS_SNAKE");
-GameObjectMan.Init();
+Grid grid = new Grid(30, 30, 20);
 
-GameObject snake = new SnakeSegment("segment_0", 600 / 2 - 20, 600 / 2 - 20, 20, Color.White, 2, Direction.Up);
-GameObjectMan.Add(snake);
+Snake snake = new Snake(grid.Width / 2, grid.Height / 2);
 
-while (Window.IsRunning())
+Renderer renderer = new Renderer(grid.PixelWidth, grid.PixelHeight, "CS_SNAKE");
+
+while (renderer.IsRunning)
 {
-    GameObjectMan.Update(Window.GetDeltatime());
-    Window.Draw();
+    renderer.Update(grid, snake);
+    renderer.Draw(grid, snake);
 }
 
-GameObjectMan.Destroy();
-Window.Destroy();
-
+renderer.Destroy();
