@@ -5,16 +5,15 @@ namespace cs_snake
 {
     public class Renderer
     {
-        private bool _isRunning;
+        private bool _shouldClose;
         private float _deltaTime;
 
-        public bool IsRunning => _isRunning;
         public float DeltaTime => _deltaTime;
+        public bool ShouldClose => _shouldClose;
 
         public Renderer(int width, int height, string title)
         {
             Raylib.InitWindow(width, height, title);
-            _isRunning = true;
             _deltaTime = 0.0f;
         }
 
@@ -23,9 +22,17 @@ namespace cs_snake
             Raylib.CloseWindow();
         }
 
-        public void Update(Grid grid, Snake snake)
+        public void Update()
         {
+            Game game = Game.GetInstance();
+            if (!game.IsRunning)
+            {
+                return;
+            }
+
             float dt = _deltaTime;
+
+            Snake snake = game.Snake;
 
             if(Raylib.IsKeyDown(KeyboardKey.A))
             {
@@ -47,19 +54,29 @@ namespace cs_snake
             snake.Update(dt);
         }
 
-        public void Draw(Grid grid, Snake snake)
+        public void Draw()
         {
-            _isRunning = !Raylib.WindowShouldClose();
+            _shouldClose = Raylib.WindowShouldClose();
 
-            if (_isRunning)
+            Game game = Game.GetInstance();
+
+            if (!_shouldClose)
             {
                 Raylib.BeginDrawing();
                 Raylib.ClearBackground(Color.Purple);
+
+                Grid grid = game.Grid;
+                Snake snake = game.Snake;
 
                 foreach(var segment in snake.Segments)
                 {
                     (int x, int y) = grid.GridToPixel(segment.GridX, segment.GridY);
                     Raylib.DrawRectangle(x, y, grid.CellSize, grid.CellSize, segment.Color);
+                }
+
+                if (!game.IsRunning)
+                {
+                    Raylib.DrawText("Game Over!", 0, 0, 18, Color.White);
                 }
 
                 Raylib.EndDrawing();
