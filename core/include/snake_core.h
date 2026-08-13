@@ -1,5 +1,12 @@
-#ifndef CORE_API_H
-#define CORE_API_H
+#ifndef SNAKE_CORE_H
+#define SNAKE_CORE_H
+
+#include <stdint.h>
+
+#define SNAKE_CORE_VERSION 2
+
+#define SNAKE_SUCCESS 0
+#define SNAKE_FAILURE -1
 
 #ifdef _WIN32
     #ifdef DLL_EXPORT
@@ -17,21 +24,23 @@
 extern "C" {
 #endif
 
-CORE_API int CORE_CALL snake_core_version();
+typedef struct SnakeGame SnakeGame;
 
-CORE_API int CORE_CALL snake_game_width();
-CORE_API int CORE_CALL snake_game_height();
+typedef struct SnakeConfig {
+    int32_t width;
+    int32_t height;
+} SnakeConfig;
 
-CORE_API void CORE_CALL snake_init();
-CORE_API void CORE_CALL snake_update(float deltatime);
-CORE_API void CORE_CALL snake_destroy();
+CORE_API int32_t CORE_CALL snake_core_version(void);
 
-CORE_API int CORE_CALL snake_snake_segments();
-CORE_API int CORE_CALL snake_segment_position_x(int segment);
-CORE_API int CORE_CALL snake_segment_position_y(int segment);
+CORE_API SnakeGame* CORE_CALL snake_create(SnakeConfig config);
+CORE_API int32_t CORE_CALL snake_destroy(SnakeGame* pGame);
+
+CORE_API int32_t CORE_CALL snake_grid_width(SnakeGame* pGame);
+CORE_API int32_t CORE_CALL snake_grid_height(SnakeGame* pGame);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif //CORE_API_H
+#endif //SNAKE_CORE_H

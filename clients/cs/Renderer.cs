@@ -7,14 +7,20 @@ namespace cs_snake
     {
         private bool _shouldClose;
         private float _deltaTime;
+        private int _cellSize;
 
         public float DeltaTime => _deltaTime;
         public bool ShouldClose => _shouldClose;
+        public int CellSize => _cellSize;
 
-        public Renderer(int width, int height, string title)
+        public Renderer(string title, int gridWidth, int gridHeight, int cellSize)
         {
-            Raylib.InitWindow(width, height, title);
+            Debug.Assert(gridWidth > 0);
+            Debug.Assert(gridHeight > 0);
+            Debug.Assert(cellSize > 0);
             _deltaTime = 0.0f;
+            _cellSize = cellSize;
+            Raylib.InitWindow(gridWidth * cellSize, gridHeight * cellSize, title);
         }
 
         public void Destroy()
@@ -65,13 +71,13 @@ namespace cs_snake
                 Raylib.BeginDrawing();
                 Raylib.ClearBackground(Color.Purple);
 
-                Grid grid = game.Grid;
                 Snake snake = game.Snake;
 
                 foreach(var segment in snake.Segments)
                 {
-                    (int x, int y) = grid.GridToPixel(segment.GridX, segment.GridY);
-                    Raylib.DrawRectangle(x, y, grid.CellSize, grid.CellSize, segment.Color);
+                    int x = segment.GridX * _cellSize;
+                    int y = segment.GridY * _cellSize;
+                    Raylib.DrawRectangle(x, y, _cellSize, _cellSize, segment.Color);
                 }
 
                 if (!game.IsRunning)

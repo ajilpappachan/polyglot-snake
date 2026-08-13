@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "cs": {
+      "commandName": "Project",
+      "debugEngines": "managed,native"
+    }
+  }
+}

@@ -19,16 +19,16 @@ namespace cs_snake
         }
 
         public bool IsRunning;
+        public Core Core;
         public Renderer Renderer;
-        public Grid Grid;
         public Snake Snake;
 
         private Game()
         {
             IsRunning = true;
-            Grid = new Grid(30, 30, 20);
-            Snake = new Snake(Grid.Width / 2, Grid.Height / 2);
-            Renderer = new Renderer(Grid.PixelWidth, Grid.PixelHeight, "CS_SNAKE");
+            Core = new Core(30, 30);
+            Snake = new Snake(Core.GridWidth / 2, Core.GridHeight / 2);
+            Renderer = new Renderer("CS_SNAKE", Core.GridWidth, Core.GridHeight, 20);
         }
 
         public void Run()
@@ -40,6 +40,7 @@ namespace cs_snake
             }
 
             Renderer.Destroy();
+            Core.Destroy();
         }
 
 

@@ -1,46 +1,35 @@
 #include "snake_core.h"
+#include "Game.h"
 
-#define CORE_VERSION 1
-
-#define GAME_WIDTH 30
-#define GAME_HEIGHT 30
-
-CORE_API int CORE_CALL snake_core_version()
+CORE_API int32_t CORE_CALL snake_core_version(void)
 {
-    return CORE_VERSION;
+    return SNAKE_CORE_VERSION;
 }
 
-CORE_API int CORE_CALL snake_game_width()
+CORE_API SnakeGame* CORE_CALL snake_create(SnakeConfig config)
 {
-    return GAME_WIDTH;
+    if (config.width < 1 || config.height < 1) return nullptr;
+
+    SnakeGame* pGame = (SnakeGame*)(new Game(config.width, config.height));
+    return pGame;
 }
-CORE_API int CORE_CALL snake_game_height()
+CORE_API int32_t CORE_CALL snake_destroy(SnakeGame* pGame)
 {
-    return GAME_HEIGHT;
+    if (pGame == nullptr) return SNAKE_FAILURE;
+
+    delete (Game*)pGame;
+    return SNAKE_SUCCESS;
 }
 
-CORE_API void CORE_CALL snake_init()
+CORE_API int32_t CORE_CALL snake_grid_width(SnakeGame* pGame)
 {
-    // TODO
+    if (pGame == nullptr) return SNAKE_FAILURE;
+    
+    return ((Game*)pGame)->GetGrid()->GetWidth();
 }
-CORE_API void CORE_CALL snake_update(float deltatime)
+CORE_API int32_t CORE_CALL snake_grid_height(SnakeGame* pGame)
 {
-    // TODO
-}
-CORE_API void CORE_CALL snake_destroy()
-{
-    // TODO
-}
-
-CORE_API int CORE_CALL snake_snake_segments()
-{
-    return 1;
-}
-CORE_API int CORE_CALL snake_segment_position_x(int segment)
-{
-    return 14;
-}
-CORE_API int CORE_CALL snake_segment_position_y(int segment)
-{
-    return 14;
+    if (pGame == nullptr) return SNAKE_FAILURE;
+    
+    return ((Game*)pGame)->GetGrid()->GetHeight();
 }
