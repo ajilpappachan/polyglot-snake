@@ -37,3 +37,7 @@ or build release build with
 npm install
 npm run build
 ```
+
+## License
+
+MIT — see [LICENSE](LICENSE).
