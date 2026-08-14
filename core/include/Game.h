@@ -2,6 +2,7 @@
 #define GAME_H
 
 #include "Grid.h"
+#include "Snake.h"
 
 class Game
 {    
@@ -13,9 +14,11 @@ class Game
     ~Game();
 
     const Grid* GetGrid() const;
+    const Snake* GetSnake() const;
 
     private:
     Grid grid;
+    Snake snake;
 };
 
 #endif // GAME_H

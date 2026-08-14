@@ -14,7 +14,9 @@ endif()
 add_library(snake_core SHARED
             src/snake_core.cpp 
             src/Game.cpp 
-            src/Grid.cpp)
+            src/Grid.cpp
+            src/Snake.cpp
+            src/SnakeSegment.cpp)
 target_include_directories(snake_core PUBLIC include)
 target_compile_definitions(snake_core PRIVATE DLL_EXPORT)
 target_link_libraries(snake_core PRIVATE core_warnings)
@@ -32,3 +34,4 @@ add_test_executable(core_version)
 add_test_executable(create_destroy)
 add_test_executable(create_destroy_multiple)
 add_test_executable(grid_dimensions)
+add_test_executable(snake_init)

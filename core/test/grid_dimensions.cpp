@@ -4,7 +4,7 @@ int main()
 {
     CHECK_EQ(snake_core_version(), SNAKE_CORE_VERSION);
 
-    int32_t status;
+    SNAKE_STATUS status;
     SnakeGame* pGameA;
     SnakeGame* pGameB;
     
@@ -14,13 +14,13 @@ int main()
     CHECK(pGameB != nullptr);
 
     int32_t width, height;
-    width = snake_grid_width(pGameA);
+    status = snake_grid_dimensions(pGameA, &width, &height);
+    CHECK_EQ(status, SNAKE_SUCCESS);
     CHECK_EQ(width, 30);
-    height = snake_grid_height(pGameA);
     CHECK_EQ(height, 30);
-    width = snake_grid_width(pGameB);
+    status = snake_grid_dimensions(pGameB, &width, &height);
+    CHECK_EQ(status, SNAKE_SUCCESS);
     CHECK_EQ(width, 20);
-    height = snake_grid_height(pGameB);
     CHECK_EQ(height, 10);
 
     status = snake_destroy(pGameA);
