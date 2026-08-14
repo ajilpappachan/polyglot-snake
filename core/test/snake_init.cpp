@@ -10,38 +10,30 @@ int main()
     pGame = snake_create(SnakeConfig({30, 30}));
     CHECK(pGame != nullptr);
 
-    int segmentsCount;
-    status = snake_segment_count(pGame, &segmentsCount);
+    SnakeGameState gameState;
+    status = snake_game_state(pGame, &gameState);
     CHECK_EQ(status, SNAKE_SUCCESS);
-    CHECK_EQ(segmentsCount, 7); // TEMPORARY!!
+    
+    CHECK_EQ(gameState.segmentCount, 7); // TEMPORARY!!
 
-    int startPositions[] = {
-        30/2, 30/2,
-        30/2, 30/2 + 1,
-        30/2, 30/2 + 2,
-        30/2, 30/2 + 3,
-        30/2, 30/2 + 4,
-        30/2, 30/2 + 5,
-        30/2, 30/2 + 6,
+    int32_t startData[] = { // x, y, direction, color
+        30/2, 30/2,     0, 0,
+        30/2, 30/2 + 1, 0, 1,
+        30/2, 30/2 + 2, 0, 1,
+        30/2, 30/2 + 3, 0, 1,
+        30/2, 30/2 + 4, 0, 1,
+        30/2, 30/2 + 5, 0, 1,
+        30/2, 30/2 + 6, 0, 1,
     };
 
-    int bufferSize = 0;
-    status = snake_segment_data_size(pGame, &bufferSize);
-    CHECK_EQ(bufferSize, segmentsCount * 2 * (int)sizeof(int));
-    char* pBuffer = new char[bufferSize];
-    status = snake_segment_data(pGame, bufferSize, (int32_t*)pBuffer);
-    CHECK_EQ(status, SNAKE_SUCCESS);
-
-    for (int i = 0; i < segmentsCount; i++)
+    for (int i = 0; i < gameState.segmentCount; i++)
     {
-        int* pSegmentsData = (int*)pBuffer;
-        int x = pSegmentsData[i * 2];
-        int y = pSegmentsData[i * 2 + 1];
-        CHECK_EQ(x, startPositions[i * 2]);
-        CHECK_EQ(y, startPositions[i * 2 + 1]);
+        const SnakeSegmentData segmentData = gameState.pSegmentData[i];
+        CHECK_EQ(segmentData.x,         startData[i * 4 + 0]);
+        CHECK_EQ(segmentData.y,         startData[i * 4 + 1]);
+        CHECK_EQ(segmentData.direction, startData[i * 4 + 2]);
+        CHECK_EQ(segmentData.color,     startData[i * 4 + 3]);
     }
-
-    delete[] pBuffer;
 
     status = snake_destroy(pGame);
     CHECK_EQ(status, SNAKE_SUCCESS);

@@ -1,7 +1,9 @@
 #ifndef UTILS_H
 #define UTILS_H
 
-enum class Direction
+#include <stdint.h>
+
+enum class Direction : int32_t
 {
     Up,
     Right,
@@ -9,7 +11,7 @@ enum class Direction
     Left
 };
 
-enum class Color
+enum class Color : int32_t
 {
     Green,
     White,

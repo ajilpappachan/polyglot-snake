@@ -36,48 +36,16 @@ CORE_API SNAKE_STATUS CORE_CALL snake_grid_dimensions(SnakeGame* pGame, int32_t*
     return SNAKE_SUCCESS;
 }
 
-CORE_API SNAKE_STATUS CORE_CALL snake_segment_count(SnakeGame* pGame, int32_t* out_count)
+CORE_API SNAKE_STATUS CORE_CALL snake_game_state(SnakeGame* pGame, SnakeGameState* pState)
 {
     if (pGame == nullptr) return SNAKE_FAILURE;
-    if (out_count == nullptr) return SNAKE_FAILURE;
+    if (pState == nullptr) return SNAKE_FAILURE;
 
     const Snake* pSnake = ((Game*)pGame)->GetSnake();
-    *out_count = pSnake->GetSegmentCount();
-    
-    return SNAKE_SUCCESS;
-}
+    const SnakeSegment* pSegments = pSnake->GetSegments()->data();
 
-CORE_API SNAKE_STATUS CORE_CALL snake_segment_data_size(SnakeGame* pGame, int32_t* out_size)
-{
-    if (pGame == nullptr) return SNAKE_FAILURE;
-    if (out_size == nullptr) return SNAKE_FAILURE;
-
-    const Snake* pSnake = ((Game*)pGame)->GetSnake();
-    int segmentCount = pSnake->GetSegmentCount();
-    *out_size = segmentCount * 2 * sizeof(int32_t);
-
-    return SNAKE_SUCCESS;
-}
-
-CORE_API SNAKE_STATUS CORE_CALL snake_segment_data(SnakeGame* pGame, int32_t bufferSize, int32_t* pBuffer)
-{
-    if (pGame == nullptr) return SNAKE_FAILURE;
-    if (pBuffer == nullptr) return SNAKE_FAILURE;
-
-    const Snake* pSnake = ((Game*)pGame)->GetSnake();
-    int segmentCount = pSnake->GetSegmentCount();
-    int dataSize = segmentCount * 2 * sizeof(int32_t);
-    if (bufferSize < dataSize) return SNAKE_FAILURE;
-
-    const std::vector<SnakeSegment>* segments = pSnake->GetSegments();
-    for (int i = 0; i < segmentCount; i++)
-    {
-        int x = 0;
-        int y = 0;
-        segments->at(i).GetPosition(x, y);
-        *(pBuffer + (i * 2)) = x;
-        *(pBuffer + (i * 2 + 1)) = y;
-    }
+    pState->segmentCount = pSnake->GetSegmentCount();
+    pState->pSegmentData = (const SnakeSegmentData*)pSegments;
 
     return SNAKE_SUCCESS;
 }

@@ -21,14 +21,12 @@ namespace cs_snake
         public bool IsRunning;
         public Core Core;
         public Renderer Renderer;
-        public Snake Snake;
 
         private Game()
         {
             IsRunning = true;
             Core = new Core(30, 30);
-            Snake = new Snake(Core.GridWidth / 2, Core.GridHeight / 2);
-            Renderer = new Renderer("CS_SNAKE", Core.GridWidth, Core.GridHeight, 20);
+            Renderer = new Renderer("CS_SNAKE", Core, 20);
         }
 
         public void Run()
@@ -36,6 +34,7 @@ namespace cs_snake
             while (!Renderer.ShouldClose)
             {
                 Renderer.Update();
+                Core.Update();
                 Renderer.Draw();
             }
 

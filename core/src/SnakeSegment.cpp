@@ -13,7 +13,8 @@ SnakeSegment::SnakeSegment(const SnakeSegment& segment)
 :
 x(segment.x),
 y(segment.y),
-direction(segment.direction)
+direction(segment.direction),
+color(segment.color)
 {
 }
 
@@ -22,6 +23,7 @@ SnakeSegment& SnakeSegment::operator= (const SnakeSegment& segment)
     this->x = segment.x;
     this->y = segment.y;
     this->direction = segment.direction;
+    this->color = segment.color;
     return *this;
 }
 

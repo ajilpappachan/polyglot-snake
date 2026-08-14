@@ -8,19 +8,22 @@ namespace cs_snake
         private bool _shouldClose;
         private float _deltaTime;
         private int _cellSize;
+        private Core _core;
 
         public float DeltaTime => _deltaTime;
         public bool ShouldClose => _shouldClose;
         public int CellSize => _cellSize;
 
-        public Renderer(string title, int gridWidth, int gridHeight, int cellSize)
+        public Renderer(string title, Core core, int cellSize)
         {
-            Debug.Assert(gridWidth > 0);
-            Debug.Assert(gridHeight > 0);
+            _core = core;
+            (int width, int height) = core.GetGridDimensions();
+            Debug.Assert(width > 0);
+            Debug.Assert(height > 0);
             Debug.Assert(cellSize > 0);
             _deltaTime = 0.0f;
             _cellSize = cellSize;
-            Raylib.InitWindow(gridWidth * cellSize, gridHeight * cellSize, title);
+            Raylib.InitWindow(width * cellSize, height * cellSize, title);
         }
 
         public void Destroy()
@@ -36,28 +39,22 @@ namespace cs_snake
                 return;
             }
 
-            float dt = _deltaTime;
-
-            Snake snake = game.Snake;
-
             if(Raylib.IsKeyDown(KeyboardKey.A))
             {
-                snake.SetDirection(Direction.Left);
+                // TODO
             }
             if(Raylib.IsKeyDown(KeyboardKey.D))
             {
-                snake.SetDirection(Direction.Right);
+                // TODO
             }
             if(Raylib.IsKeyDown(KeyboardKey.W))
             {
-                snake.SetDirection(Direction.Up);
+                // TODO
             }
             if(Raylib.IsKeyDown(KeyboardKey.S))
             {
-                snake.SetDirection(Direction.Down);
+                // TODO
             }
-
-            snake.Update(dt);
         }
 
         public void Draw()
@@ -69,20 +66,20 @@ namespace cs_snake
             if (!_shouldClose)
             {
                 Raylib.BeginDrawing();
-                Raylib.ClearBackground(Color.Purple);
+                Raylib.ClearBackground(Raylib_cs.Color.Purple);
 
-                Snake snake = game.Snake;
+                Core.GameState gameState = _core.CurrentState;
 
-                foreach(var segment in snake.Segments)
+                foreach (var segment in gameState.segmentData)
                 {
-                    int x = segment.GridX * _cellSize;
-                    int y = segment.GridY * _cellSize;
-                    Raylib.DrawRectangle(x, y, _cellSize, _cellSize, segment.Color);
+                    int x = segment.x * _cellSize;
+                    int y = segment.y * _cellSize;
+                    Raylib.DrawRectangle(x, y, _cellSize, _cellSize, Utils.GetRenderColor(segment.color));
                 }
 
                 if (!game.IsRunning)
                 {
-                    Raylib.DrawText("Game Over!", 0, 0, 18, Color.White);
+                    Raylib.DrawText("Game Over!", 0, 0, 18, Raylib_cs.Color.White);
                 }
 
                 Raylib.EndDrawing();

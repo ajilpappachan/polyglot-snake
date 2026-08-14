@@ -21,6 +21,12 @@
 extern "C" {
 #endif
 
+enum SNAKE_STATUS : int32_t
+{
+    SNAKE_SUCCESS = 0,
+    SNAKE_FAILURE = -1
+};
+
 typedef struct SnakeGame SnakeGame;
 
 typedef struct SnakeConfig {
@@ -28,11 +34,19 @@ typedef struct SnakeConfig {
     int32_t height;
 } SnakeConfig;
 
-enum SNAKE_STATUS : int32_t
+typedef struct SnakeSegmentData 
 {
-    SNAKE_SUCCESS = 0,
-    SNAKE_FAILURE = -1
-};
+    int32_t x;
+    int32_t y;
+    int32_t direction;
+    int32_t color;
+} SnakeSegmentData;
+
+typedef struct SnakeGameState
+{
+    int32_t segmentCount;
+    const SnakeSegmentData* pSegmentData;
+} SnakeGameState;
 
 CORE_API int32_t CORE_CALL snake_core_version(void);
 CORE_API SnakeGame* CORE_CALL snake_create(SnakeConfig config);
@@ -41,9 +55,7 @@ CORE_API SNAKE_STATUS CORE_CALL snake_destroy(SnakeGame* pGame);
 
 CORE_API SNAKE_STATUS CORE_CALL snake_grid_dimensions(SnakeGame* pGame, int32_t* out_width, int32_t* out_height);
 
-CORE_API SNAKE_STATUS CORE_CALL snake_segment_count(SnakeGame* pGame, int32_t* out_count);
-CORE_API SNAKE_STATUS CORE_CALL snake_segment_data_size(SnakeGame* pGame, int32_t* out_size);
-CORE_API SNAKE_STATUS CORE_CALL snake_segment_data(SnakeGame* pGame, int32_t bufferSize, int32_t* pBuffer);
+CORE_API SNAKE_STATUS CORE_CALL snake_game_state(SnakeGame* pGame, SnakeGameState* pState);
 
 #ifdef __cplusplus
 }
