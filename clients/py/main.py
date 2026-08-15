@@ -1,17 +1,12 @@
-from gameobject import GameObjectMan
+from core import Core
 from renderer import Renderer
-from snake import Snake
 
-render = Renderer(600, 600)
-snake = Snake(600//2 - 20, 600//2 - 20, 20)
-GameObjectMan.add("snake", snake)
+if __name__ == "__main__":
+    core = Core(30, 30)
+    renderer = Renderer(core, 20)
 
-while render.running:
-    print(f"FPS: {render.deltatime_s()}")
-    render.poll_events()
+    while renderer.running:
+        renderer.update()
+        renderer.draw()
 
-    GameObjectMan.update(render.deltatime_s())
-
-    render.draw()
-
-render.destroy()
+    renderer.destroy()

@@ -18,7 +18,8 @@ if errorlevel 1 exit /b 1
 @REM     "-sSINGLE_FILE=1"
 
 
-@REM copy /Y "core\build\Debug\snake_core.dll" "clients\py\"
+copy /Y "core\build\Debug\snake_core.dll" "clients\py\"
+if errorlevel 1 exit /b 1
 
 copy /Y "core\build\Debug\snake_core.dll" "clients\cs\"
 if errorlevel 1 exit /b 1
