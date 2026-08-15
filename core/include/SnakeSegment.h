@@ -21,6 +21,8 @@ class SnakeSegment
     void SetColor(const Color color);
     Color GetColor() const;
 
+    void Move();
+
     private:
     int x;
     int y;

@@ -6,6 +6,8 @@ namespace cs_snake
 {
     public class Core
     {
+        public const int SNAKE_CORE_VERSION = 4;
+
         public struct SegmentData
         {
             public int x;
@@ -15,10 +17,9 @@ namespace cs_snake
         }
         public struct GameState
         {
+            public bool isRunning;
             public List<SegmentData> segmentData;
         }
-
-        public const int SNAKE_CORE_VERSION = 3;
 
         private int _version;
         private UIntPtr _game;
@@ -40,7 +41,10 @@ namespace cs_snake
                 throw new InvalidOperationException("Failed to create new core game");
             }
 
-            _gameState = new GameState { segmentData = new List<SegmentData>() };
+            _gameState = new GameState { 
+                isRunning = true, 
+                segmentData = new List<SegmentData>() 
+            };
         }
 
         public void Destroy()
@@ -66,9 +70,23 @@ namespace cs_snake
             return (width, height);
         }
 
+        public void ChangeDirection(Direction direction)
+        {
+            ABI.SNAKE_STATUS status = ABI.snake_change_direction(_game, (int)direction);
+            if (status == ABI.SNAKE_STATUS.SNAKE_FAILURE)
+            {
+                throw new InvalidOperationException("Failed to change direction in core");
+            }
+        }
+
         public void Update()
         {
-            // TODO Update Core
+            // Update Core
+            ABI.SNAKE_STATUS status = ABI.snake_update(_game);
+            if (status == ABI.SNAKE_STATUS.SNAKE_FAILURE)
+            {
+                throw new InvalidOperationException("Failed to update core");
+            }
 
             // Update Game State
             privUpdateGameState();
@@ -81,6 +99,8 @@ namespace cs_snake
             {
                 throw new InvalidOperationException("Failed to get game state");
             }
+
+            _gameState.isRunning = newState.isRunning == 0 ? false : true;
 
             if (newState.segmentCount != _gameState.segmentData.Count)
             {
@@ -129,6 +149,7 @@ namespace cs_snake
         [StructLayout(LayoutKind.Sequential)]
         public struct GameState
         {
+            public Byte isRunning;
             public Int32 segmentCount;
             public UIntPtr pSegmentData;
         }
@@ -152,6 +173,14 @@ namespace cs_snake
         [LibraryImport("snake_core.dll")]
         [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
         public static partial SNAKE_STATUS snake_game_state(UIntPtr pGame, out GameState pState);
+
+        [LibraryImport("snake_core.dll")]
+        [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+        public static partial SNAKE_STATUS snake_change_direction(UIntPtr pGame, Int32 direction);
+
+        [LibraryImport("snake_core.dll")]
+        [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+        public static partial SNAKE_STATUS snake_update(UIntPtr pGame);
 
         public static unsafe ReadOnlySpan<SegmentData> GetSegmentDataView(GameState pState)
         {

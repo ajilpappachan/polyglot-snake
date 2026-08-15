@@ -18,13 +18,11 @@ namespace cs_snake
             return sInstance;
         }
 
-        public bool IsRunning;
         public Core Core;
         public Renderer Renderer;
 
         private Game()
         {
-            IsRunning = true;
             Core = new Core(30, 30);
             Renderer = new Renderer("CS_SNAKE", Core, 20);
         }
@@ -34,7 +32,6 @@ namespace cs_snake
             while (!Renderer.ShouldClose)
             {
                 Renderer.Update();
-                Core.Update();
                 Renderer.Draw();
             }
 

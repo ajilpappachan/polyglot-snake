@@ -2,7 +2,8 @@
 
  Snake::Snake(int x, int y, Direction direction)
  :
- segments()
+ segments(),
+ nextDirection(direction)
  {
     SnakeSegment head(x, y, direction, Color::Green);
     segments.push_back(head);
@@ -29,4 +30,27 @@ Snake::~Snake()
 const std::vector<SnakeSegment>* Snake::GetSegments() const
 {
     return &this->segments;
+}
+
+void Snake::ChangeDirection(Direction direction)
+{
+    Direction currDirection = this->segments[0].GetDirection();
+    Direction revDirection = (Direction)(((int)currDirection + 2) % 4); // Clockwise order direction, wrap around after 3
+    if (direction != revDirection)
+    {
+        this->nextDirection = direction;
+    }
+}
+
+void Snake::Move()
+{
+    Direction nextDir = this->nextDirection;
+    Direction lastDir;
+    for (int i = 0; i < this->segments.size(); i++)
+    {
+        lastDir = this->segments.at(i).GetDirection();
+        this->segments.at(i).SetDirection(nextDir);
+        this->segments.at(i).Move();
+        nextDir = lastDir;
+    }
 }

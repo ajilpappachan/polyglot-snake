@@ -10,6 +10,9 @@ namespace cs_snake
         private int _cellSize;
         private Core _core;
 
+        private float _timeSinceCoreUpdate;
+        private float _coreUpdateFrequency;
+
         public float DeltaTime => _deltaTime;
         public bool ShouldClose => _shouldClose;
         public int CellSize => _cellSize;
@@ -24,6 +27,9 @@ namespace cs_snake
             _deltaTime = 0.0f;
             _cellSize = cellSize;
             Raylib.InitWindow(width * cellSize, height * cellSize, title);
+
+            _timeSinceCoreUpdate = 0;
+            _coreUpdateFrequency = 1;
         }
 
         public void Destroy()
@@ -33,27 +39,33 @@ namespace cs_snake
 
         public void Update()
         {
-            Game game = Game.GetInstance();
-            if (!game.IsRunning)
+            if (!_core.CurrentState.isRunning)
             {
                 return;
             }
 
             if(Raylib.IsKeyDown(KeyboardKey.A))
             {
-                // TODO
+                _core.ChangeDirection(Direction.Left);
             }
             if(Raylib.IsKeyDown(KeyboardKey.D))
             {
-                // TODO
+                _core.ChangeDirection(Direction.Right);
             }
             if(Raylib.IsKeyDown(KeyboardKey.W))
             {
-                // TODO
+                _core.ChangeDirection(Direction.Up);
             }
             if(Raylib.IsKeyDown(KeyboardKey.S))
             {
-                // TODO
+                _core.ChangeDirection(Direction.Down);
+            }
+
+            _timeSinceCoreUpdate += Raylib.GetFrameTime();
+            if (_timeSinceCoreUpdate > _coreUpdateFrequency)
+            {
+                _core.Update();
+                _timeSinceCoreUpdate = 0;
             }
         }
 
@@ -77,7 +89,7 @@ namespace cs_snake
                     Raylib.DrawRectangle(x, y, _cellSize, _cellSize, Utils.GetRenderColor(segment.color));
                 }
 
-                if (!game.IsRunning)
+                if (!_core.CurrentState.isRunning)
                 {
                     Raylib.DrawText("Game Over!", 0, 0, 18, Raylib_cs.Color.White);
                 }

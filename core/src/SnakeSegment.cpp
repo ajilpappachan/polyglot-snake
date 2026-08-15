@@ -60,3 +60,24 @@ Color SnakeSegment::GetColor() const
 {
     return this->color;
 }
+
+void SnakeSegment::Move()
+{
+    switch (this->direction)
+    {
+    case Direction::Up:
+        this->y--;
+        break;
+    case Direction::Right:
+        this->x++;
+        break;
+    case Direction::Down:
+        this->y++;
+        break;
+    case Direction::Left:
+        this->x--;
+        break;
+    default:
+        break;
+    }
+}

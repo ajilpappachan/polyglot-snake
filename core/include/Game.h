@@ -16,9 +16,15 @@ class Game
     const Grid* GetGrid() const;
     const Snake* GetSnake() const;
 
+    bool IsGameRunning() const;
+
+    void ChangeDirection(Direction direction);
+    void Update();
+
     private:
     Grid grid;
     Snake snake;
+    bool isRunning;
 };
 
 #endif // GAME_H

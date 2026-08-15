@@ -16,8 +16,12 @@ class Snake
     int GetSegmentCount() const;
     const std::vector<SnakeSegment>* GetSegments() const;
 
+    void ChangeDirection(Direction direction);
+    void Move();
+
     private:
     std::vector<SnakeSegment> segments;
+    Direction nextDirection;
 };
 
 #endif // SNAKE_H

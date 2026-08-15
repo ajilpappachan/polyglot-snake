@@ -44,8 +44,28 @@ CORE_API SNAKE_STATUS CORE_CALL snake_game_state(SnakeGame* pGame, SnakeGameStat
     const Snake* pSnake = ((Game*)pGame)->GetSnake();
     const SnakeSegment* pSegments = pSnake->GetSegments()->data();
 
+    pState->isRunning = ((Game*)pGame)->IsGameRunning();
     pState->segmentCount = pSnake->GetSegmentCount();
     pState->pSegmentData = (const SnakeSegmentData*)pSegments;
+
+    return SNAKE_SUCCESS;
+}
+
+CORE_API SNAKE_STATUS CORE_CALL snake_change_direction(SnakeGame* pGame, int32_t direction)
+{
+    if (pGame == nullptr) return SNAKE_FAILURE;
+    if (direction < 0 || direction > 3) return SNAKE_FAILURE;
+    
+    ((Game*)pGame)->ChangeDirection((Direction)direction);
+
+    return SNAKE_SUCCESS;
+}
+
+CORE_API SNAKE_STATUS CORE_CALL snake_update(SnakeGame* pGame)
+{
+    if (pGame == nullptr) return SNAKE_FAILURE;
+
+    ((Game*)pGame)->Update();
 
     return SNAKE_SUCCESS;
 }

@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-#define SNAKE_CORE_VERSION 3
+#define SNAKE_CORE_VERSION 4
 
 #ifdef _WIN32
     #ifdef DLL_EXPORT
@@ -44,6 +44,7 @@ typedef struct SnakeSegmentData
 
 typedef struct SnakeGameState
 {
+    int8_t isRunning; // Careful about padding!
     int32_t segmentCount;
     const SnakeSegmentData* pSegmentData;
 } SnakeGameState;
@@ -56,6 +57,10 @@ CORE_API SNAKE_STATUS CORE_CALL snake_destroy(SnakeGame* pGame);
 CORE_API SNAKE_STATUS CORE_CALL snake_grid_dimensions(SnakeGame* pGame, int32_t* out_width, int32_t* out_height);
 
 CORE_API SNAKE_STATUS CORE_CALL snake_game_state(SnakeGame* pGame, SnakeGameState* pState);
+
+CORE_API SNAKE_STATUS CORE_CALL snake_change_direction(SnakeGame* pGame, int32_t direction);
+
+CORE_API SNAKE_STATUS CORE_CALL snake_update(SnakeGame* pGame);
 
 #ifdef __cplusplus
 }
