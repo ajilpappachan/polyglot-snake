@@ -97,7 +97,16 @@ class _Core_ABI:
         state = GameState(isRunning, segments)
         return (status, state)
 
+    @classmethod
+    def snake_change_direction(cls, game_ptr: int, direction: Direction) -> int:
+        status = cls._lib.snake_change_direction(game_ptr, direction)
+        return status
 
+    @classmethod
+    def snake_update(cls, game_ptr: int) -> int:
+        status = cls._lib.snake_update(game_ptr)
+        return status
+    
 
 class Core:
     def __init__(self, width: int, height: int) -> None:
@@ -106,11 +115,11 @@ class Core:
         print(f"Loaded core version {self.version}")
         if self.version != core_version:
             raise RuntimeError("Core version mismatch")
-
         config = _Config(width, height)
         self._game = _Core_ABI.snake_create(config)
         if not self._game:
             raise RuntimeError("Failed to create core game")
+        self.current_state = GameState(True, [])
 
     def destroy(self) -> None:
         status = _Core_ABI.snake_destroy(self._game)
@@ -123,8 +132,16 @@ class Core:
             raise RuntimeError("Failed to get grid dimensions")
         return (width, height)
 
-    def get_game_state(self) -> GameState:
+    def change_direction(self, direction: Direction) -> None:
+        status = _Core_ABI.snake_change_direction(self._game, direction)
+        if status != SNAKE_SUCCESS:
+            raise RuntimeError("Failed to change direction")
+
+    def update(self) -> None:
+        status = _Core_ABI.snake_update(self._game)
+        if status != SNAKE_SUCCESS:
+            raise RuntimeError("Failed to update core game")
         (status, state) = _Core_ABI.snake_game_state(self._game)
         if status != SNAKE_SUCCESS:
             raise RuntimeError("Failed to get game state")
-        return state
+        self.current_state = state
