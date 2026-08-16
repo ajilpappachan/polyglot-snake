@@ -4,11 +4,13 @@ This is an excercise on architecture of polyglot projects, and understanding com
 
 The objective is to make the core of a snake game in `C++` and render the game on desktop using `C#` and `python`, and on the web with `Typescript`.
 
+The core is set-up with a partial implementation of the snake game, with `C#` and `python` clients fully implemented. The `Typescript` client is currently in progress.
+
 ## Setup
 
-Run `BuildCore.bat` to build the dll/wasm files and copy them to client projects.
+Run `BuildCore.bat` to build the dll (and wasm soon) files and copy them to client projects.
 
-Requires `cmake` and `emsdk` installed.
+Requires `cmake` and `emsdk` installed. Core tests run automatically.
 
 ## Py-client
 
@@ -24,19 +26,7 @@ Open the visual studio `.sln` file to run the `C# client`.
 
 ## Ts-Client
 
-Run the `vite` application with
-
-```shell
-npm install
-npm run dev
-```
-
-or build release build with
-
-```shell
-npm install
-npm run build
-```
+IN PROGRESS
 
 ## License
 
