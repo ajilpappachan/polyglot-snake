@@ -119,7 +119,10 @@ class Core:
         self._game = _Core_ABI.snake_create(config)
         if not self._game:
             raise RuntimeError("Failed to create core game")
-        self.current_state = GameState(True, [])
+        (status, state) = _Core_ABI.snake_game_state(self._game)
+        if status != SNAKE_SUCCESS:
+            raise RuntimeError("Failed to get game state")
+        self.current_state = state
 
     def destroy(self) -> None:
         status = _Core_ABI.snake_destroy(self._game)

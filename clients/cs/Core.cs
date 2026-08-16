@@ -1,28 +1,34 @@
 ﻿using System.Diagnostics;
+using System.Net.NetworkInformation;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace cs_snake
 {
+    public enum SNAKE_STATUS : Int32
+    {
+        SNAKE_SUCCESS = 0,
+        SNAKE_FAILURE = -1
+    }
+    public struct SegmentData
+    {
+        public int x;
+        public int y;
+        public Direction direction;
+        public Color color;
+    }
+    public struct GameState
+    {
+        public bool isRunning;
+        public List<SegmentData> segmentData;
+    }
+
     public class Core
     {
         public const int SNAKE_CORE_VERSION = 4;
 
-        public struct SegmentData
-        {
-            public int x;
-            public int y;
-            public Direction direction;
-            public Color color;
-        }
-        public struct GameState
-        {
-            public bool isRunning;
-            public List<SegmentData> segmentData;
-        }
-
         private int _version;
-        private UIntPtr _game;
+        private nuint _gamePtr;
         private GameState _gameState;
 
         public int Version => _version;
@@ -30,39 +36,41 @@ namespace cs_snake
 
         public Core(int width, int height)
         {
-            _version = ABI.snake_core_version();
+            _version = ABI.GetCoreVersion();
             if (_version != SNAKE_CORE_VERSION)
             {
                 throw new InvalidOperationException("Core version error");
             }
-            _game = ABI.snake_create(new ABI.Config { width = width, height = height });
-            if (_game == UIntPtr.Zero)
+            _gamePtr = ABI.SnakeGameCreate(width, height);
+            if (_gamePtr == UIntPtr.Zero)
             {
                 throw new InvalidOperationException("Failed to create new core game");
             }
 
-            _gameState = new GameState { 
-                isRunning = true, 
-                segmentData = new List<SegmentData>() 
-            };
+            // Get initial game state
+            SNAKE_STATUS status = ABI.GetGameState(_gamePtr, out _gameState);
+            if (status != SNAKE_STATUS.SNAKE_SUCCESS)
+            {
+                throw new InvalidOperationException("Failed to get game state from core");
+            }
         }
 
         public void Destroy()
         {
-            if (_game == UIntPtr.Zero) return;
+            if (_gamePtr == 0) return;
 
-            ABI.SNAKE_STATUS status = ABI.snake_destroy(_game);
-            if (status == ABI.SNAKE_STATUS.SNAKE_FAILURE)
+            SNAKE_STATUS status = ABI.SnakeGameDestroy(_gamePtr);
+            if (status != SNAKE_STATUS.SNAKE_SUCCESS)
             {
                 throw new InvalidOperationException("Failed to destroy game");
             }
-            _game = UIntPtr.Zero;
+            _gamePtr = 0;
         }
 
         public (int width, int height) GetGridDimensions()
         {
-            ABI.SNAKE_STATUS status = ABI.snake_grid_dimensions(_game, out int width, out int height);
-            if (status == ABI.SNAKE_STATUS.SNAKE_FAILURE)
+            SNAKE_STATUS status = ABI.GetGridDimensions(_gamePtr, out int width, out int height);
+            if (status != SNAKE_STATUS.SNAKE_SUCCESS)
             {
                 throw new InvalidOperationException("Failed to get grid dimensions");
             }
@@ -72,8 +80,8 @@ namespace cs_snake
 
         public void ChangeDirection(Direction direction)
         {
-            ABI.SNAKE_STATUS status = ABI.snake_change_direction(_game, (int)direction);
-            if (status == ABI.SNAKE_STATUS.SNAKE_FAILURE)
+            SNAKE_STATUS status = ABI.ChangeDirection(_gamePtr, direction);
+            if (status != SNAKE_STATUS.SNAKE_SUCCESS)
             {
                 throw new InvalidOperationException("Failed to change direction in core");
             }
@@ -81,73 +89,41 @@ namespace cs_snake
 
         public void Update()
         {
+            SNAKE_STATUS status;
             // Update Core
-            ABI.SNAKE_STATUS status = ABI.snake_update(_game);
-            if (status == ABI.SNAKE_STATUS.SNAKE_FAILURE)
+            status = ABI.Update(_gamePtr);
+            if (status != SNAKE_STATUS.SNAKE_SUCCESS)
             {
                 throw new InvalidOperationException("Failed to update core");
             }
 
             // Update Game State
-            privUpdateGameState();
-        }
-
-        private void privUpdateGameState()
-        {
-            ABI.SNAKE_STATUS status = ABI.snake_game_state(_game, out ABI.GameState newState);
-            if (status == ABI.SNAKE_STATUS.SNAKE_FAILURE)
+            status = ABI.GetGameState(_gamePtr, out _gameState);
+            if (status != SNAKE_STATUS.SNAKE_SUCCESS)
             {
-                throw new InvalidOperationException("Failed to get game state");
-            }
-
-            _gameState.isRunning = newState.isRunning == 0 ? false : true;
-
-            if (newState.segmentCount != _gameState.segmentData.Count)
-            {
-                _gameState.segmentData = [.. new SegmentData[newState.segmentCount]];
-            }
-
-            var inSegmentData = ABI.GetSegmentDataView(newState);
-
-            for (int i = 0; i < _gameState.segmentData.Count; i++)
-            {
-                _gameState.segmentData[i] = new SegmentData
-                {
-                    x = inSegmentData[i].x,
-                    y = inSegmentData[i].y,
-                    direction = (Direction)inSegmentData[i].direction,
-                    color = (Color)inSegmentData[i].color
-                };
+                throw new InvalidOperationException("Failed to get game state from core");
             }
         }
     }
 
     public static partial class ABI
     {
-        public enum SNAKE_STATUS : Int32
-        {
-            SNAKE_SUCCESS = 0,
-            SNAKE_FAILURE = -1
-        }
-
         [StructLayout(LayoutKind.Sequential)]
-        public struct Config
+        private struct C_Config
         {
             public Int32 width;
             public Int32 height;
         }
-
         [StructLayout(LayoutKind.Sequential)]
-        public struct SegmentData
+        private struct C_SegmentData
         {
             public Int32 x;
             public Int32 y;
             public Int32 direction;
             public Int32 color;
         }
-
         [StructLayout(LayoutKind.Sequential)]
-        public struct GameState
+        private struct C_GameState
         {
             public Byte isRunning;
             public Int32 segmentCount;
@@ -156,36 +132,85 @@ namespace cs_snake
 
         [LibraryImport("snake_core.dll")]
         [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
-        public static partial Int32 snake_core_version();
-
+        private static partial Int32 snake_core_version();
         [LibraryImport("snake_core.dll")]
         [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
-        public static partial UIntPtr snake_create(Config config);
-
+        private static partial UIntPtr snake_create(C_Config config);
         [LibraryImport("snake_core.dll")]
         [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
-        public static partial SNAKE_STATUS snake_destroy(UIntPtr pGame);
-
+        private static partial SNAKE_STATUS snake_destroy(UIntPtr pGame);
         [LibraryImport("snake_core.dll")]
         [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
-        public static partial SNAKE_STATUS snake_grid_dimensions(UIntPtr pGame, out Int32 width, out Int32 height);
-
+        private static partial SNAKE_STATUS snake_grid_dimensions(UIntPtr pGame, out Int32 width, out Int32 height);
         [LibraryImport("snake_core.dll")]
         [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
-        public static partial SNAKE_STATUS snake_game_state(UIntPtr pGame, out GameState pState);
-
+        private static partial SNAKE_STATUS snake_game_state(UIntPtr pGame, out C_GameState pState);
         [LibraryImport("snake_core.dll")]
         [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
-        public static partial SNAKE_STATUS snake_change_direction(UIntPtr pGame, Int32 direction);
-
+        private static partial SNAKE_STATUS snake_change_direction(UIntPtr pGame, Int32 direction);
         [LibraryImport("snake_core.dll")]
         [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
-        public static partial SNAKE_STATUS snake_update(UIntPtr pGame);
+        private static partial SNAKE_STATUS snake_update(UIntPtr pGame);
 
-        public static unsafe ReadOnlySpan<SegmentData> GetSegmentDataView(GameState pState)
+        public static int GetCoreVersion()
         {
-            return new ReadOnlySpan<SegmentData>((void*)pState.pSegmentData, pState.segmentCount);
+            return snake_core_version();
         }
 
+        public static nuint SnakeGameCreate(int width, int height)
+        {
+            return snake_create(new C_Config{ width=width, height=height});
+        }
+
+        public static SNAKE_STATUS SnakeGameDestroy(nuint gamePtr)
+        {
+            return snake_destroy(gamePtr);
+        }
+
+        public static SNAKE_STATUS GetGridDimensions(nuint gamePtr, out int width, out int height)
+        {
+            return snake_grid_dimensions(gamePtr, out width, out height);
+        }
+
+        public static SNAKE_STATUS GetGameState(nuint gamePtr, out GameState gameState)
+        {
+            C_GameState newState = new C_GameState();
+            SNAKE_STATUS status = snake_game_state(gamePtr, out newState);
+            if (status == SNAKE_STATUS.SNAKE_SUCCESS)
+            {
+                gameState.isRunning = newState.isRunning == 0 ? false : true;
+                gameState.segmentData = new List<SegmentData>(newState.segmentCount);
+                ReadOnlySpan<C_SegmentData> segmentDataView = privGetSegmentDataView(newState);
+                for (int i = 0; i < newState.segmentCount; i++)
+                {
+                    gameState.segmentData.Add(new SegmentData
+                    {
+                        x = segmentDataView[i].x,
+                        y = segmentDataView[i].y,
+                        direction = (Direction)segmentDataView[i].direction,
+                        color = (Color)segmentDataView[i].color
+                    });
+                }
+            }
+            else
+            {
+                gameState = new GameState();
+            }
+            return status;
+        }
+        private static unsafe ReadOnlySpan<C_SegmentData> privGetSegmentDataView(C_GameState pState)
+        {
+            return new ReadOnlySpan<C_SegmentData>((void*)pState.pSegmentData, pState.segmentCount);
+        }
+
+        public static SNAKE_STATUS ChangeDirection(nuint gamePtr, Direction direction)
+        {
+            return snake_change_direction(gamePtr, (int)direction);
+        }
+
+        public static SNAKE_STATUS Update(nuint gamePtr)
+        {
+            return snake_update(gamePtr);
+        }
     }
 }

@@ -8,6 +8,8 @@ namespace cs_snake
         private bool _shouldClose;
         private float _deltaTime;
         private int _cellSize;
+        private int _width;
+        private int _height;
         private Core _core;
 
         private float _timeSinceCoreUpdate;
@@ -15,6 +17,8 @@ namespace cs_snake
 
         public float DeltaTime => _deltaTime;
         public bool ShouldClose => _shouldClose;
+        public int Width => _width;
+        public int Height => _height;
         public int CellSize => _cellSize;
 
         public Renderer(string title, Core core, int cellSize)
@@ -26,8 +30,9 @@ namespace cs_snake
             Debug.Assert(cellSize > 0);
             _deltaTime = 0.0f;
             _cellSize = cellSize;
-            Raylib.InitWindow(width * cellSize, height * cellSize, title);
-
+            _width = width * cellSize;
+            _height = height * cellSize;
+            Raylib.InitWindow(_width, _height, title);
             _timeSinceCoreUpdate = 0;
             _coreUpdateFrequency = 1;
         }
@@ -44,29 +49,29 @@ namespace cs_snake
                 return;
             }
 
-            if(Raylib.IsKeyDown(KeyboardKey.A))
-            {
-                _core.ChangeDirection(Direction.Left);
-            }
-            if(Raylib.IsKeyDown(KeyboardKey.D))
-            {
-                _core.ChangeDirection(Direction.Right);
-            }
-            if(Raylib.IsKeyDown(KeyboardKey.W))
+            if(Raylib.IsKeyDown(KeyboardKey.W) || Raylib.IsKeyDown(KeyboardKey.Up))
             {
                 _core.ChangeDirection(Direction.Up);
             }
-            if(Raylib.IsKeyDown(KeyboardKey.S))
+            if(Raylib.IsKeyDown(KeyboardKey.D) || Raylib.IsKeyDown(KeyboardKey.Right))
+            {
+                _core.ChangeDirection(Direction.Right);
+            }
+            if(Raylib.IsKeyDown(KeyboardKey.S) || Raylib.IsKeyDown(KeyboardKey.Down))
             {
                 _core.ChangeDirection(Direction.Down);
             }
+            if(Raylib.IsKeyDown(KeyboardKey.A) || Raylib.IsKeyDown(KeyboardKey.Left))
+            {
+                _core.ChangeDirection(Direction.Left);
+            }
 
-            _timeSinceCoreUpdate += Raylib.GetFrameTime();
             if (_timeSinceCoreUpdate > _coreUpdateFrequency)
             {
                 _core.Update();
                 _timeSinceCoreUpdate = 0;
             }
+            _timeSinceCoreUpdate += Raylib.GetFrameTime();
         }
 
         public void Draw()
@@ -80,7 +85,7 @@ namespace cs_snake
                 Raylib.BeginDrawing();
                 Raylib.ClearBackground(Raylib_cs.Color.Purple);
 
-                Core.GameState gameState = _core.CurrentState;
+                GameState gameState = _core.CurrentState;
 
                 foreach (var segment in gameState.segmentData)
                 {
@@ -91,7 +96,14 @@ namespace cs_snake
 
                 if (!_core.CurrentState.isRunning)
                 {
-                    Raylib.DrawText("Game Over!", 0, 0, 18, Raylib_cs.Color.White);
+                    string text = "Game Over!";
+                    int fontSize = 32;
+                    int textWidth = Raylib.MeasureText(text, fontSize);
+                    Raylib.DrawText(
+                        text, 
+                        _width / 2 - textWidth / 2, 0, 
+                        fontSize,
+                        Raylib_cs.Color.White);
                 }
 
                 Raylib.EndDrawing();
