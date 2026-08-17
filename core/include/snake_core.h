@@ -12,9 +12,15 @@
         #define CORE_API __declspec(dllimport)
     #endif
     #define CORE_CALL __cdecl
-#else
-    #define CORE_API __attribute__((visibility("default")))
-    #define CORE_CALL
+#else 
+    #ifdef __EMSCRIPTEN__
+        #include <emscripten/emscripten.h>
+        #define CORE_API EMSCRIPTEN_KEEPALIVE
+        #define CORE_CALL
+    #else
+        #define CORE_API __attribute__((visibility("default")))
+        #define CORE_CALL
+    #endif
 #endif
 
 #ifdef __cplusplus
@@ -50,6 +56,7 @@ typedef struct SnakeGameState
 } SnakeGameState;
 
 CORE_API int32_t CORE_CALL snake_core_version(void);
+
 CORE_API SnakeGame* CORE_CALL snake_create(SnakeConfig config);
 
 CORE_API SNAKE_STATUS CORE_CALL snake_destroy(SnakeGame* pGame);

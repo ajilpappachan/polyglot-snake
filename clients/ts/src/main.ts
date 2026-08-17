@@ -1,6 +1,12 @@
-import { abiVersion, add } from "./core";
+import { Core } from "./core";
+
+const core = new Core(30, 30);
+
+console.log(core);
+console.log(core.getGridDimensions());
+
+core.destroy();
 
 document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
-  <p>ABI VERSION: ${abiVersion()}<p>
-  <p>5 + 2 = ${add(5, 2)}<p>
+  <p>TODO Renderer<p>
 `;
