@@ -18,7 +18,7 @@ em++ ^
     -o core/build/Debug/snake_core.mjs ^
     --emit-tsd snake_core.d.mts ^
     "-sEXPORTED_FUNCTIONS=_malloc,_free" ^
-    "-sEXPORTED_RUNTIME_METHODS=ccall,cwrap,getValue,setValue,stackSave,stackAlloc,stackRestore" ^
+    "-sEXPORTED_RUNTIME_METHODS=ccall,cwrap,getValue,setValue,stackSave,stackAlloc,stackRestore, HEAP32" ^
     "-sENVIRONMENT=web,node" ^
     "-sASSERTIONS=1" ^
     "-sSINGLE_FILE=1"
