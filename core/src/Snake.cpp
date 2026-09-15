@@ -1,9 +1,11 @@
 #include "Snake.h"
+#include "Grid.h"
 
- Snake::Snake(int x, int y, Direction direction)
+ Snake::Snake(int x, int y, Direction direction, const Grid* _pGrid)
  :
  segments(),
- nextDirection(direction)
+ nextDirection(direction),
+ pGrid(_pGrid)
  {
     SnakeSegment head(x, y, direction, Color::Green);
     segments.push_back(head);
@@ -51,6 +53,17 @@ void Snake::Move()
         lastDir = this->segments.at(i).GetDirection();
         this->segments.at(i).SetDirection(nextDir);
         this->segments.at(i).Move();
+        int x, y;
+        this->segments.at(i).GetPosition(x, y);
+        if (x > this->pGrid->GetWidth() - 1)
+        { x = 0; }
+        else if (x < 0)
+        { x = this->pGrid->GetWidth() - 1; }
+        if (y > this->pGrid->GetHeight() - 1)
+        { y = 0; }
+        else if (y < 0)
+        { y = this->pGrid->GetHeight() - 1; }
+        this->segments.at(i).SetPosition(x, y);
         nextDir = lastDir;
     }
 }

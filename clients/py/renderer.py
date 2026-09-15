@@ -50,7 +50,6 @@ class Renderer:
         if self._time_since_core_update > self._core_update_frequency:
             self._core.update()
             self._time_since_core_update = 0.0
-            print("update core")
         self._time_since_core_update += self.deltatime()
 
     def draw(self) -> None:

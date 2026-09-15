@@ -3,7 +3,7 @@
 Game::Game(int width, int height)
 :
 grid(width, height),
-snake(width / 2, height / 2, Direction::Up),
+snake(width / 2, height / 2, Direction::Up, &grid),
 isRunning(true)
 {
 }
