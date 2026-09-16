@@ -14,7 +14,7 @@ int main()
     status = snake_game_state(pGame, &gameState);
     CHECK_EQ(status, SNAKE_SUCCESS);
     
-    CHECK_EQ(gameState.segmentCount, 7); // TEMPORARY!!
+    CHECK_EQ(gameState.segmentCount, 5);
 
     int32_t startData[] = { // x, y, direction, color
         30/2, 30/2,     0, 0,
@@ -22,8 +22,6 @@ int main()
         30/2, 30/2 + 2, 0, 1,
         30/2, 30/2 + 3, 0, 1,
         30/2, 30/2 + 4, 0, 1,
-        30/2, 30/2 + 5, 0, 1,
-        30/2, 30/2 + 6, 0, 1,
     };
 
     for (int i = 0; i < gameState.segmentCount; i++)

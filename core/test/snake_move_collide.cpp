@@ -18,7 +18,7 @@ int main()
     
     CHECK_EQ(gameState.pSegmentData[0].direction, 0);
 
-    // This test is probably going to lock me into a starting state of 4 segments 
+    // This test is probably going to lock me into a starting state of 5 segments 
     // unless i come up with a better system.
     
     status = snake_change_direction(pGame, 1); // Turn Right

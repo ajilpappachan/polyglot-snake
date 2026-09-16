@@ -9,14 +9,10 @@
  {
     SnakeSegment head(x, y, direction, Color::Green);
     segments.push_back(head);
-
-    // TEMPORARY
     segments.push_back(SnakeSegment(x, y + 1, direction, Color::White));
     segments.push_back(SnakeSegment(x, y + 2, direction, Color::White));
     segments.push_back(SnakeSegment(x, y + 3, direction, Color::White));
     segments.push_back(SnakeSegment(x, y + 4, direction, Color::White));
-    segments.push_back(SnakeSegment(x, y + 5, direction, Color::White));
-    segments.push_back(SnakeSegment(x, y + 6, direction, Color::White));
  }
 
 Snake::~Snake()
@@ -67,4 +63,39 @@ void Snake::Move()
         this->segments.at(i).SetPosition(x, y);
         nextDir = lastDir;
     }
+}
+
+void Snake::Grow()
+{
+    const Grid* pGrid = this->pGame->GetGrid();
+    const SnakeSegment tail = this->segments.back();
+    int x, y;
+    Direction direction = tail.GetDirection();
+    tail.GetPosition(x, y);
+    switch(direction)
+    {
+        case Direction::Up:
+            y++;
+            break;
+        case Direction::Right:
+            x--;
+            break;
+        case Direction::Down:
+            y--;
+            break;
+        case Direction::Left:
+            x++;
+            break;
+        default:
+            break;
+    }
+    if (x > pGrid->GetWidth() - 1)
+    { x = 0; }
+    else if (x < 0)
+    { x = pGrid->GetWidth() - 1; }
+    if (y > pGrid->GetHeight() - 1)
+    { y = 0; }
+    else if (y < 0)
+    { y = pGrid->GetHeight() - 1; }
+    segments.push_back(SnakeSegment(x, y, direction, Color::White));
 }

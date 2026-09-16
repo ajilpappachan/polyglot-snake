@@ -76,15 +76,17 @@ void Game::privCheckFruitCollision()
     this->fruit.GetPosition(fruitX, fruitY);
     if (headX == fruitX && headY == fruitY) // Collision with Fruit
     {
+        this->snake.Grow();
         this->privRespawnFruit();
     } 
 }
 
 void Game::privRespawnFruit()
 {
-    bool isValidPosition = true;
+    bool isValidPosition;
     do
     {
+        isValidPosition = true;
         int fruitX, fruitY, segX, segY;    
         this->fruit.Respawn();
         this->fruit.GetPosition(fruitX, fruitY);

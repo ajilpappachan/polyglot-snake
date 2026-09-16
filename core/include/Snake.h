@@ -20,6 +20,7 @@ class Snake
 
     void ChangeDirection(Direction direction);
     void Move();
+    void Grow();
 
     private:
     std::vector<SnakeSegment> segments;
