@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics;
-using System.Net.NetworkInformation;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
@@ -17,15 +16,22 @@ namespace cs_snake
         public Direction direction;
         public Color color;
     }
+    public struct FruitData
+    {
+        public int x;
+        public int y;
+        public Color color;
+    }
     public struct GameState
     {
         public bool isRunning;
         public List<SegmentData> segmentData;
+        public FruitData fruitData;
     }
 
     public class Core
     {
-        public const int SNAKE_CORE_VERSION = 4;
+        public const int SNAKE_CORE_VERSION = 5;
 
         private int _version;
         private nuint _gamePtr;
@@ -41,7 +47,7 @@ namespace cs_snake
             {
                 throw new InvalidOperationException("Core version error");
             }
-            _gamePtr = ABI.SnakeGameCreate(width, height);
+            _gamePtr = ABI.SnakeGameCreate(width, height, (int)DateTime.Now.Ticks);
             if (_gamePtr == UIntPtr.Zero)
             {
                 throw new InvalidOperationException("Failed to create new core game");
@@ -113,6 +119,7 @@ namespace cs_snake
         {
             public Int32 width;
             public Int32 height;
+            public Int32 randomseed;
         }
         [StructLayout(LayoutKind.Sequential)]
         private struct C_SegmentData
@@ -122,12 +129,19 @@ namespace cs_snake
             public Int32 direction;
             public Int32 color;
         }
+        private struct C_FruitData
+        {
+            public Int32 x;
+            public Int32 y;
+            public Int32 color;
+        }
         [StructLayout(LayoutKind.Sequential)]
         private struct C_GameState
         {
             public Byte isRunning;
             public Int32 segmentCount;
             public UIntPtr pSegmentData;
+            public C_FruitData fruitData;
         }
 
         [LibraryImport("snake_core.dll")]
@@ -157,9 +171,9 @@ namespace cs_snake
             return snake_core_version();
         }
 
-        public static nuint SnakeGameCreate(int width, int height)
+        public static nuint SnakeGameCreate(int width, int height, int randomseed)
         {
-            return snake_create(new C_Config{ width=width, height=height});
+            return snake_create(new C_Config{ width=width, height=height, randomseed=randomseed });
         }
 
         public static SNAKE_STATUS SnakeGameDestroy(nuint gamePtr)
@@ -191,6 +205,9 @@ namespace cs_snake
                         color = (Color)segmentDataView[i].color
                     });
                 }
+                gameState.fruitData.x = newState.fruitData.x;
+                gameState.fruitData.y = newState.fruitData.y;
+                gameState.fruitData.color = (Color)newState.fruitData.color;
             }
             else
             {

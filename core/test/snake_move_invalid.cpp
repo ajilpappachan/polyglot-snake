@@ -7,7 +7,7 @@ int main()
     SNAKE_STATUS status;
     SnakeGame* pGame;
     
-    pGame = snake_create(SnakeConfig({30, 30}));
+    pGame = snake_create(SnakeConfig({30, 30, 0}));
     CHECK(pGame != nullptr);
 
     SnakeGameState gameState;

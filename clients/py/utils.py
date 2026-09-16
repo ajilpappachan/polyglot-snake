@@ -9,7 +9,7 @@ class Direction(IntEnum):
 class Color(IntEnum):
     Green = 0
     White = 1
-    Blue = 2
+    Red = 2
 
 class Utils:
     @classmethod
@@ -20,8 +20,8 @@ class Utils:
                 out = "green"
             case Color.White:
                 out = "white"
-            case Color.Blue:
-                out = "blue"
+            case Color.Red:
+                out = "red"
             case _:
                 assert False, "unknown color"
         return out

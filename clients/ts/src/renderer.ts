@@ -92,6 +92,16 @@ export class Renderer {
       );
     });
 
+    {
+      this.canvas.fillStyle = Utils.getRenderColor(gameState.fruitData.color);
+      this.canvas.fillRect(
+        gameState.fruitData.x * this.cellSize,
+        gameState.fruitData.y * this.cellSize,
+        this.cellSize,
+        this.cellSize,
+      );
+    }
+
     if (gameState.isRunning == false) {
       this.canvas.fillStyle = "white";
       const gameOverText = "Game Over!";

@@ -8,9 +8,9 @@ int main()
     SnakeGame* pGameA;
     SnakeGame* pGameB;
     
-    pGameA = snake_create(SnakeConfig({30, 30}));
+    pGameA = snake_create(SnakeConfig({30, 30, 0}));
     CHECK(pGameA != nullptr);
-    pGameB = snake_create(SnakeConfig({20, 10}));
+    pGameB = snake_create(SnakeConfig({20, 10, 0}));
     CHECK(pGameB != nullptr);
 
     status = snake_destroy(pGameA);

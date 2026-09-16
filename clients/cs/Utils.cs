@@ -15,7 +15,7 @@ namespace cs_snake
     {
         Green,
         White,
-        Blue
+        Red
     }
 
     public static class Utils
@@ -32,8 +32,8 @@ namespace cs_snake
                 case Color.White:
                     renderColor = Raylib_cs.Color.White;
                     break;
-                case Color.Blue:
-                    renderColor = Raylib_cs.Color.Blue;
+                case Color.Red:
+                    renderColor = Raylib_cs.Color.Red;
                     break;
                 default:
                     Debug.Assert(false);

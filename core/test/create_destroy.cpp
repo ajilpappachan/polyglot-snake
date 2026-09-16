@@ -7,12 +7,12 @@ int main()
     int32_t status;
     SnakeGame* pGame;
 
-    pGame = snake_create(SnakeConfig({-1, 0}));
+    pGame = snake_create(SnakeConfig({-1, 0, 0}));
     CHECK(pGame == nullptr);
     status = snake_destroy(pGame);
     CHECK_EQ(status, SNAKE_FAILURE);
     
-    pGame = snake_create(SnakeConfig({30, 30}));
+    pGame = snake_create(SnakeConfig({30, 30, 0}));
     CHECK(pGame != nullptr);
     status = snake_destroy(pGame);
     CHECK_EQ(status, SNAKE_SUCCESS);

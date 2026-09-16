@@ -10,7 +10,7 @@ int main()
     SNAKE_STATUS status;
     SnakeGame* pGame;
     
-    pGame = snake_create(SnakeConfig({GridWidth, GridHeight}));
+    pGame = snake_create(SnakeConfig({GridWidth, GridHeight, 0}));
     CHECK(pGame != nullptr);
 
     SnakeGameState gameState;

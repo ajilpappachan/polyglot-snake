@@ -1,10 +1,11 @@
 from ctypes import CDLL, byref, c_int8, c_int32, Structure, POINTER
 from pathlib import Path
+import time
 from typing import NamedTuple
 
 from utils import Color, Direction
 
-core_version: int = 4
+core_version: int = 5
 
 SNAKE_STATUS = c_int32
 SNAKE_SUCCESS = 0
@@ -13,12 +14,14 @@ SNAKE_FAILURE = -1
 class _C_Config(Structure):
     _fields_= [
         ("width", c_int32),
-        ("height", c_int32)
+        ("height", c_int32),
+        ("randomseed", c_int32)
     ]
 
 class _Config(NamedTuple):
     width: int
     height: int
+    randomseed: int
 
 class _C_SnakeGame(Structure):
     pass
@@ -37,16 +40,30 @@ class SegmentData(NamedTuple):
     direction: Direction
     color: Color
 
+class _C_FruitData(Structure):
+    _fields_ = [
+        ("x", c_int32),
+        ("y", c_int32),
+        ("color", c_int32),
+    ]
+
+class FruitData(NamedTuple):
+    x: int
+    y: int
+    color: Color
+
 class _C_GameState(Structure):
     _fields_ = [
         ("isRunning", c_int8),
         ("segmentCount", c_int32),
         ("pSegmentData", POINTER(_C_SegmentData)),
+        ("fruitData", _C_FruitData)
     ]
 
 class GameState(NamedTuple):
     isRunning: bool
     segmentData: list[SegmentData]
+    fruitData: FruitData
 
 class _Core_ABI:
     _lib = CDLL(Path(__file__).with_name("snake_core.dll"))
@@ -71,7 +88,7 @@ class _Core_ABI:
 
     @classmethod
     def snake_create(cls, config: _Config) -> int:
-        c_config = _C_Config(config.width, config.height)
+        c_config = _C_Config(config.width, config.height, config.randomseed)
         return cls._lib.snake_create(c_config)
 
     @classmethod
@@ -94,7 +111,8 @@ class _Core_ABI:
             SegmentData(s.x, s.y, Direction(s.direction), Color(s.color))
             for s in c_state.pSegmentData[:c_state.segmentCount]
         ]
-        state = GameState(isRunning, segments)
+        fruitData = FruitData(c_state.fruitData.x, c_state.fruitData.y, c_state.fruitData.color)
+        state = GameState(isRunning, segments, fruitData)
         return (status, state)
 
     @classmethod
@@ -115,7 +133,7 @@ class Core:
         print(f"Loaded core version {self.version}")
         if self.version != core_version:
             raise RuntimeError("Core version mismatch")
-        config = _Config(width, height)
+        config = _Config(width, height, int(time.time()))
         self._game = _Core_ABI.snake_create(config)
         if not self._game:
             raise RuntimeError("Failed to create core game")

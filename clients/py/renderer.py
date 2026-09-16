@@ -64,6 +64,14 @@ class Renderer:
                     segment.y * self._cellSize, 
                     self._cellSize, 
                     self._cellSize))
+        pygame.draw.rect(
+            self._screen, 
+            Utils.get_render_color(game_state.fruitData.color), 
+            pygame.Rect(
+                game_state.fruitData.x * self._cellSize, 
+                game_state.fruitData.y * self._cellSize, 
+                self._cellSize, 
+                self._cellSize))
         if not game_state.isRunning:
             font = pygame.font.SysFont("consolas", 32)
             text_surface = font.render("Game Over!", False, Utils.get_render_color(Color.White))

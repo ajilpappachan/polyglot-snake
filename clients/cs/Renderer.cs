@@ -94,6 +94,12 @@ namespace cs_snake
                     Raylib.DrawRectangle(x, y, _cellSize, _cellSize, Utils.GetRenderColor(segment.color));
                 }
 
+                {
+                    int x = gameState.fruitData.x * _cellSize;
+                    int y = gameState.fruitData.y * _cellSize;
+                    Raylib.DrawRectangle(x, y, _cellSize, _cellSize, Utils.GetRenderColor(gameState.fruitData.color));
+                }
+
                 if (!_core.CurrentState.isRunning)
                 {
                     string text = "Game Over!";

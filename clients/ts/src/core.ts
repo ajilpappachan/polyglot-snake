@@ -2,7 +2,7 @@ import MakeCoreLib from "../libs/snake_core.mjs";
 import { Direction, Color } from "./utils";
 const CoreLib = await MakeCoreLib();
 
-const CORE_VERSION = 4;
+const CORE_VERSION = 5;
 
 const SNAKE_SUCCESS = 0;
 
@@ -11,11 +11,16 @@ class CoreABI {
     return CoreLib._snake_core_version();
   }
 
-  static gameCreate(width: number, height: number): { gamePtr: number } {
+  static gameCreate(
+    width: number,
+    height: number,
+    randomseed: number,
+  ): { gamePtr: number } {
     const sp = CoreLib.stackSave();
-    const config = CoreLib.stackAlloc(8);
+    const config = CoreLib.stackAlloc(12);
     CoreLib.setValue(config, width, "i32");
     CoreLib.setValue(config + 4, height, "i32");
+    CoreLib.setValue(config + 8, randomseed, "i32");
     const gamePtr = CoreLib._snake_create(config);
     CoreLib.stackRestore(sp);
     return { gamePtr };
@@ -44,11 +49,14 @@ class CoreABI {
     data: SnakeGameData;
   } {
     const sp = CoreLib.stackSave();
-    const coreGameData = CoreLib.stackAlloc(4 * 3); // Refer struct SnakeGameState in core
+    const coreGameData = CoreLib.stackAlloc(4 * 6); // Refer struct SnakeGameState in core
     const status = CoreLib._snake_game_state(gamePtr, coreGameData);
     const isRunning = CoreLib.getValue(coreGameData, "i8");
     const segmentCount = CoreLib.getValue(coreGameData + 4, "i32");
     const segmentDataPtr = CoreLib.getValue(coreGameData + 8, "i32");
+    const fruitX = CoreLib.getValue(coreGameData + 12, "i32");
+    const fruitY = CoreLib.getValue(coreGameData + 16, "i32");
+    const fruitColor = CoreLib.getValue(coreGameData + 20, "i32");
     const segmentDataView = new Uint32Array(
       CoreLib.HEAP32.buffer,
       segmentDataPtr,
@@ -57,6 +65,11 @@ class CoreABI {
     const data: SnakeGameData = {
       isRunning: isRunning == 0 ? false : true,
       segmentData: [],
+      fruitData: {
+        x: fruitX,
+        y: fruitY,
+        color: fruitColor,
+      },
     };
     for (let i = 0; i < segmentCount; i++) {
       const segmentData: SnakeSegmentData = {
@@ -90,9 +103,16 @@ export type SnakeSegmentData = {
   color: Color;
 };
 
+export type FruitData = {
+  x: number;
+  y: number;
+  color: Color;
+};
+
 export type SnakeGameData = {
   isRunning: boolean;
   segmentData: SnakeSegmentData[];
+  fruitData: FruitData;
 };
 
 export class Core {
@@ -107,7 +127,7 @@ export class Core {
       throw new Error("Core Version mismatch");
     }
 
-    const { gamePtr } = CoreABI.gameCreate(width, height);
+    const { gamePtr } = CoreABI.gameCreate(width, height, Date.now());
     if (gamePtr == 0) {
       throw new Error("Failed to create core game");
     }

@@ -8,7 +8,7 @@ export enum Direction {
 export enum Color {
   Green,
   White,
-  Blue,
+  Red,
 }
 
 export class Utils {
@@ -21,8 +21,8 @@ export class Utils {
       case Color.White:
         renderColor = "white";
         break;
-      case Color.Blue:
-        renderColor = "blue";
+      case Color.Red:
+        renderColor = "red";
         break;
       default:
         throw new Error("Invalid render color");

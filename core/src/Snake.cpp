@@ -1,11 +1,11 @@
 #include "Snake.h"
-#include "Grid.h"
+#include "Game.h"
 
- Snake::Snake(int x, int y, Direction direction, const Grid* _pGrid)
+ Snake::Snake(int x, int y, Direction direction, const Game* _pGame)
  :
  segments(),
  nextDirection(direction),
- pGrid(_pGrid)
+ pGame(_pGame)
  {
     SnakeSegment head(x, y, direction, Color::Green);
     segments.push_back(head);
@@ -46,6 +46,7 @@ void Snake::ChangeDirection(Direction direction)
 
 void Snake::Move()
 {
+    const Grid* pGrid = this->pGame->GetGrid();
     Direction nextDir = this->nextDirection;
     Direction lastDir;
     for (int i = 0; i < this->segments.size(); i++)
@@ -55,14 +56,14 @@ void Snake::Move()
         this->segments.at(i).Move();
         int x, y;
         this->segments.at(i).GetPosition(x, y);
-        if (x > this->pGrid->GetWidth() - 1)
+        if (x > pGrid->GetWidth() - 1)
         { x = 0; }
         else if (x < 0)
-        { x = this->pGrid->GetWidth() - 1; }
-        if (y > this->pGrid->GetHeight() - 1)
+        { x = pGrid->GetWidth() - 1; }
+        if (y > pGrid->GetHeight() - 1)
         { y = 0; }
         else if (y < 0)
-        { y = this->pGrid->GetHeight() - 1; }
+        { y = pGrid->GetHeight() - 1; }
         this->segments.at(i).SetPosition(x, y);
         nextDir = lastDir;
     }

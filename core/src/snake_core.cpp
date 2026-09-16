@@ -10,6 +10,8 @@ CORE_API SnakeGame* CORE_CALL snake_create(SnakeConfig config)
 {
     if (config.width < 1 || config.height < 1) return nullptr;
 
+    std::srand(config.randomseed);
+
     SnakeGame* pGame = (SnakeGame*)(new Game(config.width, config.height));
     return pGame;
 }
@@ -43,10 +45,16 @@ CORE_API SNAKE_STATUS CORE_CALL snake_game_state(SnakeGame* pGame, SnakeGameStat
 
     const Snake* pSnake = ((Game*)pGame)->GetSnake();
     const SnakeSegment* pSegments = pSnake->GetSegments()->data();
+    const Fruit* pFruit = ((Game*)pGame)->GetFruit();
+    int fruitX, fruitY;
+    pFruit->GetPosition(fruitX, fruitY);
 
     pState->isRunning = ((Game*)pGame)->IsGameRunning();
     pState->segmentCount = pSnake->GetSegmentCount();
     pState->pSegmentData = (const SnakeSegmentData*)pSegments;
+    pState->fruitData.x = fruitX;
+    pState->fruitData.y = fruitY;
+    pState->fruitData.color = (int32_t)pFruit->GetColor();
 
     return SNAKE_SUCCESS;
 }

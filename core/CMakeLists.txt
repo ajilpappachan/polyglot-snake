@@ -16,7 +16,8 @@ add_library(snake_core SHARED
             src/Game.cpp 
             src/Grid.cpp
             src/Snake.cpp
-            src/SnakeSegment.cpp)
+            src/SnakeSegment.cpp
+            src/Fruit.cpp)
 target_include_directories(snake_core PUBLIC include)
 target_compile_definitions(snake_core PRIVATE DLL_EXPORT)
 target_link_libraries(snake_core PRIVATE core_warnings)
@@ -40,3 +41,4 @@ add_test_executable(snake_move_invalid)
 add_test_executable(snake_move_valid)
 add_test_executable(snake_move_collide)
 add_test_executable(snake_move_wrap)
+add_test_executable(fruit_init)

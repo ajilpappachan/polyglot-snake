@@ -14,6 +14,7 @@ em++ ^
     core/src/Grid.cpp ^
     core/src/SnakeSegment.cpp ^
     core/src/Snake.cpp ^
+    core/src/Fruit.cpp ^
     -I core/include/ ^
     -o core/build/Debug/snake_core.mjs ^
     --emit-tsd snake_core.d.mts ^

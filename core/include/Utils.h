@@ -15,7 +15,7 @@ enum class Color : int32_t
 {
     Green,
     White,
-    Blue
+    Red
 };
 
 #endif // UTILS_H

@@ -4,13 +4,13 @@
 #include "SnakeSegment.h"
 #include <vector>
 
-class Grid;
+class Game;
 
 class Snake
 {
     public:
     Snake() = delete;
-    Snake(int x, int y, Direction direction, const Grid* pGrid);
+    Snake(int x, int y, Direction direction, const Game* pGame);
     Snake(const Snake&) = delete;
     Snake& operator= (const Snake&) = delete;
     ~Snake();
@@ -24,7 +24,7 @@ class Snake
     private:
     std::vector<SnakeSegment> segments;
     Direction nextDirection;
-    const Grid* pGrid;
+    const Game* pGame;
 };
 
 #endif // SNAKE_H

@@ -3,6 +3,7 @@
 
 #include "Grid.h"
 #include "Snake.h"
+#include "Fruit.h"
 
 class Game
 {    
@@ -15,6 +16,7 @@ class Game
 
     const Grid* GetGrid() const;
     const Snake* GetSnake() const;
+    const Fruit* GetFruit() const;
 
     bool IsGameRunning() const;
 
@@ -22,8 +24,14 @@ class Game
     void Update();
 
     private:
+    void privCheckSnakeSelfCollision();
+    void privCheckFruitCollision();
+    void privRespawnFruit();
+
+    private:
     Grid grid;
     Snake snake;
+    Fruit fruit;
     bool isRunning;
 };
 
