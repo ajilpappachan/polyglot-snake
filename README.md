@@ -1,10 +1,10 @@
 # Polyglot-Snake
 
-This is an excercise on architecture of polyglot projects, and understanding communication between binaries through `Application Binary Interfaces (ABI)`.
+This is an exercise on architecture of polyglot projects, and understanding communication between binaries through `Application Binary Interfaces (ABI)`.
 
 The objective is to make the core of a snake game in `C++` and render the game on desktop using `C#` and `python`, and on the web with `Typescript`.
 
-The core is set-up with a partial implementation of the snake game, with all three clients (`C#`, `python`, and `TypeScript`) clients fully implemented.
+The core carries the full game: movement, direction changes, wrap-around at the grid edges, self-collision and the fail state, fruit spawning and growth. All three clients (`C#`, `python`, and `TypeScript`) are fully implemented, and each pins the ABI version it was built against.
 
 ## Setup
 
